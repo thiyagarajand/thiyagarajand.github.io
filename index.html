@@ -97,8 +97,8 @@ table {
  
     .chatbot {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
+      bottom: 20px;
+      right: 20px;
       width: 300px;
       background-color: white;
       border-radius: 10px;
@@ -107,7 +107,7 @@ table {
     }
  
     .chatbot-header {
-      background-color: #007bff;
+      background-color: #AE5ADB;
       color: white;
       padding: 10px;
       border-radius: 10px 10px 0 0;
@@ -173,7 +173,7 @@ table {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background-color: #007bff;
+      background-color: #AE5ADB;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -212,12 +212,13 @@ table {
 <body>
  
 <!-- Chatbot Button to Popout -->
-<button class="chatbot-popout-btn" onclick="toggleChatbot()">💬 Chat with Us</button>
+<button class="chatbot-popout-btn" onclick="toggleChatbot()">💬 Akasa Assistant</button>
  
 <!-- Chatbot Interface -->
 <div class="chatbot" id="chatbot">
 <div class="chatbot-header">
-<h3>Travel Assistant</h3>
+<img src="Bot.gif" alt="Akasa Air" class="Akasa-Air" width="85" height="85">
+<h2>Ask Akasa </h2>
 <button class="close-btn" onclick="toggleChatbot()">✖</button>
 </div>
 <div class="chatbot-messages" id="chatMessages">
