@@ -83,3 +83,272 @@ table {
 
  </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Air Travel Booking Chatbot</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f4f4f9;
+    }
+ 
+    .chatbot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+ 
+    .chatbot-header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+ 
+    .chatbot-header h3 {
+      margin: 0;
+    }
+ 
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+ 
+    .chatbot-messages {
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+ 
+    .chatbot-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+ 
+    .chatbot-input input {
+      border: none;
+      padding: 10px;
+      width: 100%;
+      outline: none;
+    }
+ 
+    .chatbot-input button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+ 
+    .user-message, .bot-message {
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+ 
+    .user-message {
+      background-color: #e1f7d5;
+      text-align: right;
+    }
+ 
+    .bot-message {
+      background-color: #f0f0f0;
+    }
+ 
+    .chatbot-popout-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+    }
+ 
+    /* Flight booking form */
+    .flight-form, .payment-form {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+    }
+ 
+    .flight-form input, .flight-form select, .payment-form input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+ 
+    .flight-form button, .payment-form button {
+      background-color: #28a745;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+ 
+    .flight-form button:hover, .payment-form button:hover {
+      background-color: #218838;
+    }
+</style>
+</head>
+<body>
+ 
+<!-- Chatbot Button to Popout -->
+<button class="chatbot-popout-btn" onclick="toggleChatbot()">💬 Chat with Us</button>
+ 
+<!-- Chatbot Interface -->
+<div class="chatbot" id="chatbot">
+<div class="chatbot-header">
+<h3>Travel Assistant</h3>
+<button class="close-btn" onclick="toggleChatbot()">✖</button>
+</div>
+<div class="chatbot-messages" id="chatMessages">
+<div class="bot-message">
+      Hello! How can I assist you with booking air travel today?
+</div>
+</div>
+<div class="chatbot-input">
+<input type="text" id="userMessage" placeholder="Type your message...">
+<button onclick="processUserMessage()">Send</button>
+</div>
+<!-- Flight Booking Form -->
+<div class="flight-form" id="flightForm">
+<select id="departureCity">
+<option value="">Select Departure City</option>
+<option value="New York">New York</option>
+<option value="Los Angeles">Los Angeles</option>
+<option value="Chicago">Chicago</option>
+</select>
+<select id="destinationCity">
+<option value="">Select Destination City</option>
+<option value="London">London</option>
+<option value="Paris">Paris</option>
+<option value="Tokyo">Tokyo</option>
+</select>
+<input type="date" id="travelDate">
+<input type="text" id="flightClass" placeholder="Flight Class (Economy, Business)">
+<button onclick="bookFlight()">Book Flight</button>
+</div>
+<!-- Payment Form -->
+<div class="payment-form" id="paymentForm">
+<input type="text" id="cardNumber" placeholder="Card Number">
+<input type="text" id="upiId" placeholder="UPI ID (Optional)">
+<input type="text" id="cardExpiry" placeholder="Expiry Date (MM/YY)">
+<input type="password" id="cvv" placeholder="CVV">
+<button onclick="processPayment()">Pay Now</button>
+</div>
+</div>
+ 
+<script>
+  function toggleChatbot() {
+    const chatbot = document.getElementById('chatbot');
+    chatbot.style.display = chatbot.style.display === 'none' ? 'block' : 'none';
+  }
+ 
+  function processUserMessage() {
+    const userMessage = document.getElementById('userMessage').value;
+    const chatMessages = document.getElementById('chatMessages');
+    // Add user message
+    const userMsgElement = document.createElement('div');
+    userMsgElement.className = 'user-message';
+    userMsgElement.textContent = userMessage;
+    chatMessages.appendChild(userMsgElement);
+ 
+    // Clear input
+    document.getElementById('userMessage').value = '';
+ 
+    // Bot response
+    if (userMessage.toLowerCase().includes('book flight')) {
+      showFlightForm();
+    } else if (userMessage.toLowerCase().includes('pay')) {
+      showPaymentForm();
+    } else {
+      const botMsgElement = document.createElement('div');
+      botMsgElement.className = 'bot-message';
+      botMsgElement.textContent = "I can assist you with booking flights or payment. Type 'book flight' to start.";
+      chatMessages.appendChild(botMsgElement);
+    }
+ 
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+ 
+  function showFlightForm() {
+    document.getElementById('flightForm').style.display = 'flex';
+  }
+ 
+  function bookFlight() {
+    const departureCity = document.getElementById('departureCity').value;
+    const destinationCity = document.getElementById('destinationCity').value;
+    const travelDate = document.getElementById('travelDate').value;
+    const flightClass = document.getElementById('flightClass').value;
+    const chatMessages = document.getElementById('chatMessages');
+ 
+    if (departureCity && destinationCity && travelDate && flightClass) {
+      const botMsgElement = document.createElement('div');
+      botMsgElement.className = 'bot-message';
+      botMsgElement.textContent = `Your flight from ${departureCity} to ${destinationCity} on ${travelDate} in ${flightClass} class is booked. Proceed to payment.`;
+      chatMessages.appendChild(botMsgElement);
+      // Hide flight form and show payment form
+      document.getElementById('flightForm').style.display = 'none';
+      showPaymentForm();
+    } else {
+      alert('Please fill out all the flight details.');
+    }
+ 
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+ 
+  function showPaymentForm() {
+    document.getElementById('paymentForm').style.display = 'flex';
+  }
+ 
+  function processPayment() {
+    const cardNumber = document.getElementById('cardNumber').value;
+    const upiId = document.getElementById('upiId').value;
+    const cardExpiry = document.getElementById('cardExpiry').value;
+    const cvv = document.getElementById('cvv').value;
+    const chatMessages = document.getElementById('chatMessages');
+ 
+    if (cardNumber && cardExpiry && cvv) {
+      const botMsgElement = document.createElement('div');
+      botMsgElement.className = 'bot-message';
+      botMsgElement.textContent = 'Payment successful! Your booking is confirmed.';
+      chatMessages.appendChild(botMsgElement);
+ 
+      document.getElementById('paymentForm').style.display = 'none';
+    } else {
+      alert('Please fill out payment details.');
+    }
+ 
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+</script>
+ 
+</body>
+</html>
+	
